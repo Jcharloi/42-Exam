@@ -7,9 +7,9 @@ void    ft_putchar(char c)
 
 int main(int ac, char **av)
 {
-	char tab[256];
-	char *s1;
-	char *s2;
+	int tab[256];
+	unsigned char *s1;
+	unsigned char *s2;
 	int		i;
 
 	i = 0;
@@ -25,10 +25,10 @@ int main(int ac, char **av)
 		i = 0;
 		while (s1[i] != '\0')
 		{
-			if (tab[(int)s1[i]] == 0)
+			if (tab[s1[i]] == 0)
 			{
 				ft_putchar(s1[i]);
-				tab[(int)s1[i]] = 1;
+				tab[s1[i]] = 1;
 			}
 			i++;
 		}
@@ -38,7 +38,7 @@ int main(int ac, char **av)
 			if (tab[(int)s2[i]] == 0)
 			{
 				ft_putchar(s2[i]);
-				tab[(int)s2[i]] = 1;
+				tab[s2[i]] = 1;
 			}
 			i++;
 		}

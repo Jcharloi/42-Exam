@@ -48,4 +48,5 @@ int main(int argc, char **argv)
     ft_putchar('\n');
     return (0);
 }
-~
+
+ while (str[i] != '\0' && ((str[i] == ' ' || str[i] == '\t') && (str[i + 1] == ' ' || str[i + 1] == '\t')))

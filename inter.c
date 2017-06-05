@@ -64,5 +64,3 @@ int		main(int ac, char **av)
 // 	ft_putchar(c);
 // 	tab[c] = 1;
 // }
-
-return ((octet >> 4) + (octet << 4));
