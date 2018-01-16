@@ -6,13 +6,13 @@
 /*   By: jcharloi <jcharloi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/15 15:45:36 by jcharloi          #+#    #+#             */
-/*   Updated: 2018/01/15 20:27:37 by jcharloi         ###   ########.fr       */
+/*   Updated: 2018/01/16 18:35:34 by jcharloi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
+#include <limits.h>
 
 int		ft_strlen(char *str)
 {
@@ -24,89 +24,103 @@ int		ft_strlen(char *str)
 	return (i);
 }
 
-int		is_operateur(char c)
+int		ft_isdigit(char c)
 {
-	if (c == '*' || c == '+' || c == '-' || c == '%' || c == '/')
+	if (c >= '0' && c <= '9')
 		return (1);
 	return (0);
 }
 
-void	print_tab(int *tab, int len)
+int		is_operateur(char *str)
 {
-	int i = 0;
+	int		i;
 
-	while (i < len)
+	i = 0;
+	if (str[i] == '*' || str[i] == '+' || str[i] == '-' || str[i] == '%' || str[i] == '/')
 	{
-		printf("tab[i] : %d\n", tab[i]);
-		i++;
+		if (ft_isdigit(str[i + 1]) == 0)
+			return (1);
 	}
-	printf("\n");
+	return (0);
 }
 
-void	rpn_calc(char *str)
+long		*rpn_calc(char *str)
 {
-	int	*tab;
+	long	*tab;
 	int		i;
 	int		j;
 		
 	i = 0;
 	j = 0;
-	if (!(tab = (int*)malloc(sizeof(int) * ft_strlen(str))))
-		return ;
-	tab[j] = atoi(str);
+	if (!(tab = (long*)malloc(sizeof(long) * ft_strlen(str))))
+		return (NULL);
 	while (str[i] != '\0')
 	{
-		if (isdigit(str[i]) == 1)
+		while (is_operateur(str + i) == 0)
 		{
 			tab[j] = atoi(str + i);
-			print_tab(tab, 6);
 			j++;
+			while (str[i] != '\0' && str[i] != ' ')
+				i++;
+			if (str[i] == '\0')
+			{
+				printf("Error\n");
+				return (NULL);
+			}
+			while (str[i] == ' ')
+				i++;
 		}
-		i++;
-		if (is_operateur(str[i]) == 1)
+		if (j < 2)
 		{
-			printf("%d\n", j);
-			if (str[i] == '+')
-			{
-				printf("j - 2 : %d et operateur : %c\n", tab[j - 2], str[i]);
-				tab[j - 2] = tab[j - 2] + tab[j - 1];
-				print_tab(tab, 3);
-			}
-			else if (str[i] == '*')
-			{
-				printf("j - 2 : %d et operateur : %c\n", tab[j - 2], str[i]);
-				tab[j - 2] = tab[j - 2] * tab[j - 1];
-				print_tab(tab, 3);
-			}
-			else if (str[i] == '/')
-			{
-				printf("j - 2 : %d et operateur : %c\n", tab[j - 2], str[i]);
-				tab[j - 2] = tab[j - 2] / tab[j - 1];
-				print_tab(tab, 3);
-			}
-			else if (str[i] == '%')
-			{
-				printf("j - 2 : %d et operateur : %c\n", tab[j - 2], str[i]);
-				tab[j - 2] = tab[j - 2] % tab[j - 1];
-				print_tab(tab, 3);
-			}
-			else if (str[i] == '-')
-			{
-				printf("j - 2 : %d et operateur : %c\n", tab[j - 2], str[i]);
-				tab[j - 2] = tab[j - 2] - tab[j - 1];
-				print_tab(tab, 3);
-			}
-			j--;
-			printf("j apres : %d\n", j);
+			printf("Error\n");
+			return (NULL);
 		}
+		if (str[i] == '/')
+		{
+			if (tab[j - 1] == 0)
+			{
+				printf("Error\n");
+				return (NULL);
+			}
+			tab[j - 2] = tab[j - 2] / tab[j - 1];
+		}
+		else if (str[i] == '-')
+			tab[j - 2] = tab[j - 2] - tab[j - 1];
+		else if (str[i] == '+')
+			tab[j - 2] = tab[j - 2] + tab[j - 1];
+		else if (str[i] == '*')
+			tab[j - 2] = tab[j - 2] * tab[j - 1];
+		else if (str[i] == '%')
+		{
+			if (tab[j - 1] == 0)
+			{
+				printf("Error\n");
+				return (NULL);
+			}
+			tab[j - 2] = tab[j - 2] % tab[j - 1];
+		}
+		j--;
+		i++;
+		while (str[i] == ' ')
+			i++;
 	}
+	if (j > 1)
+	{
+		printf("Error\n");
+		return (NULL);
+	}
+	return (tab);
 }
 
-int main(int argc, char **argv)
+int		main(int argc, char **argv)
 {
-	if (argc == 2)
+	long	*tab;
+
+	if (argc == 2 && argv[1][0] != '\0')
 	{
-		rpn_calc(argv[1]);
+		tab = rpn_calc(argv[1]);
+		if (tab != NULL)
+			printf("%ld\n", tab[0]);
 		return (0);
 	}
 	printf("Error\n");
